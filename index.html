@@ -14,6 +14,16 @@
             source.connect(bitcrusher);
             bitcrusher.connect(audioContext.destination);
             source.start();
+            audioContext.close().then(function() {
+              var audioData = audioContext.createBuffer(1, buffer.length, audioContext.sampleRate);
+              audioData.getChannelData(0).set(buffer.getChannelData(0));
+              var blob = new Blob([audioData], { type: 'audio/mp3' });
+              var url = URL.createObjectURL(blob);
+              var link = document.createElement('a');
+              link.href = url;
+              link.download = '8bit_audio.mp3';
+              link.click();
+            });
           });
         };
         reader.readAsArrayBuffer(file);
