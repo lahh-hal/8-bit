@@ -1,0 +1,30 @@
+<html>
+  <head>
+    <title>8-Bit MP3 Converter</title>
+    <script>
+      function convertAudio() {
+        var file = document.getElementById("mp3file").files[0];
+        var reader = new FileReader();
+        reader.onload = function() {
+          var audioContext = new (window.AudioContext || window.webkitAudioContext)();
+          audioContext.decodeAudioData(reader.result, function(buffer) {
+            var source = audioContext.createBufferSource();
+            source.buffer = buffer;
+            var bitcrusher = audioContext.createBitCrusher(buffer.length, 8);
+            source.connect(bitcrusher);
+            bitcrusher.connect(audioContext.destination);
+            source.start();
+          });
+        };
+        reader.readAsArrayBuffer(file);
+      }
+    </script>
+  </head>
+  <body>
+    <h1>8-Bit MP3 Converter</h1>
+    <form>
+      <input type="file" id="mp3file">
+      <input type="button" value="Convert" onclick="convertAudio()">
+    </form>
+  </body>
+</html>
